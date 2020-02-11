@@ -2,6 +2,12 @@
 
 def get_choice():
     display_menu()
+    while True:
+        command = input('Command: ').upper()
+        if is_valid(command):
+            return command
+        else:
+            print('Not a valid choice, try again.')
 
 def display_menu():
 
