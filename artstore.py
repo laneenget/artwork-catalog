@@ -10,6 +10,12 @@ class Artist:
         self.lastname = lastname
         self.email = email
 
+        self.artistdb = ArtistDB()
+
+    def save(self):
+        self.artistdb._add_artist()
+    
+
 class ArtistDB:
 
     class _ArtistDB:
