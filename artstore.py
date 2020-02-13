@@ -53,6 +53,21 @@ class ArtistDB:
 
         def artist_search(self, artist):
 
+            search_sql = 'SELECT rowid, * FROM artist WHERE UPPER(firstname) = UPPER(?) AND UPPER(lastname) = UPPER(?)'
+
+            con = sqlite3.connect(db) 
+            con.row_factory = sqlite3.Row 
+            row = con.execute(search_sql, (artist.first_name, artist.last_name))
+            result = row.fetchone()
+
+            if result:
+                artist = Artist(result['artist_id'], result['firstname'], result['lastname'], result['email'])
+            else:
+                artist = "None"
+            con.close()
+
+            return artist
+
 class Artwork:
 
     def __init__(self, title, price, available, artist_id, id = None):
@@ -131,7 +146,7 @@ class ArtworkDB:
         def artwork_search(self, artwork):
             """Not sure about this one"""
 
-            search_sql = 'SELECT rowid, * FROM artwork WHERE UPPER(title) like UPPER(?)'
+            search_sql = 'SELECT rowid, * FROM artwork WHERE UPPER(title) = UPPER(?)'
 
             con = sqlite3.connect(db) 
             con.row_factory = sqlite3.Row 
