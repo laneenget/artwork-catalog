@@ -1,8 +1,16 @@
 from menu import Menu
+import ui
 
 def main():
     
     menu = create_menu()
+
+    while True:
+        command = ui.get_choice(menu)
+        action = menu.get_action(command)
+        action()
+        if command == 'Q':
+            break
 
 def create_menu():
     menu = Menu()
@@ -12,6 +20,9 @@ def create_menu():
     menu.add_command('4', 'Add new artwork', add_artwork())
     menu.add_command('5', 'Delete artwork', delete_artwork())
     menu.add_command('6', 'Change artwork availability', change_availability())
+    menu.add_command('Q', 'Quit')
+
+    return menu
 
 def add_artist():
 
