@@ -2,6 +2,8 @@ import sqlite3
 import os
 
 db = os.path.join('catalog.db')
+con = sqlite3.connect(db)
+con.execute('PRAGMA foreign_keys = ON;')
 
 class Artist:
 
@@ -21,6 +23,7 @@ class ArtistDB:
     class _ArtistDB:
 
         def __init__():
+
             create_artist_tbl = 'CREATE TABLE IF NOT EXISTS artist (firstname TEXT, lastname TEXT, email TEXT, UNIQUE(firstname COLLATE NOCASE, lastname COLLATE NOCASE, email COLLATE NOCASE))'
         
             con = sqlite3.connect(db)
@@ -31,6 +34,7 @@ class ArtistDB:
             con.close()
 
         def _add_artist():
+
             insert_artist = 'INSERT INTO artist (firstname, lastname, email) VALUES (?, ?, ?)'
 
             try: 
@@ -48,8 +52,10 @@ class Artwork:
 class ArtworkDB:
 
     class _ArtworkDB:
+
         def __init__():
-            create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (artist TEXT, title TEXT, price DECIMAL(10, 2), available BOOLEAN UNIQUE(title COLLATE NOCASE))'
+
+            create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (firstname TEXT, lastname TEXT, title TEXT, price DECIMAL(10, 2), available BOOLEAN UNIQUE(title COLLATE NOCASE))'
 
             con = sqlite3.connect(db)
         
@@ -59,6 +65,9 @@ class ArtworkDB:
             con.close()
 
         def _add_artwork():
+            """Need a way to get artist id from artist table"""
+
+            insert_artwork = 'INSERT INTO artist'
 
         def _delete_artwork():
 

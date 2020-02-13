@@ -20,11 +20,13 @@ def display_menu():
     print('5: Delete artwork')
     print('6: Change artwork availability')
     print('Q: Quit')
+    print('')
 
 def is_valid():
+    
 
-def show_artwork():
+#def show_artwork():
 
-def get_artwork_id():
+#def get_artwork_id():
 
-def get_sale_info():
+#def get_sale_info():
