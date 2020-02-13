@@ -21,12 +21,10 @@ def get_artwork_info():
 
     first_name, last_name = input('Enter artist full name: ').split()
 
-    """Will not work because an instance of artist is always being returned"""
     if Artist.artist_search(first_name, last_name) != "None":
         artist_id = Artist.artist_id
     else:
         print('Add the artist to the database first.')
-        get_artist_info()
 
     title = input('Enter artwork title: ')
     price = float(input('Enter artwork price: '))
@@ -52,6 +50,17 @@ def artist_match():
             return first_name, last_name
         else:
             print('That artist is not in the database.')
+            break
+
+def artwork_match():
+
+    while True:
+        title = input('Enter the artwork title: ')
+
+        if Artwork.artwork_search(title) != "None":
+            return title
+        else:
+            print('That artwork is not in the database.')
             break
 
 def show_artwork(artworks):
