@@ -8,10 +8,10 @@ con.close()
 
 class Artist:
 
-    def __init__(self, firstname, lastname, email, id = None):
+    def __init__(self, first_name, last_name, email, id = None):
 
-        self.firstname = firstname
-        self.lastname = lastname
+        self.first_name = first_name
+        self.last_name = last_name
         self.email = email
         self.id = id
 
@@ -26,7 +26,7 @@ class ArtistDB:
 
     def __init__(self):
 
-        create_artist_tbl = 'CREATE TABLE IF NOT EXISTS artist (artist_id INT, firstname TEXT, lastname TEXT, email TEXT, UNIQUE(firstname COLLATE NOCASE, lastname COLLATE NOCASE, email COLLATE NOCASE), PRIMARY KEY(artist_id))'
+        create_artist_tbl = 'CREATE TABLE IF NOT EXISTS artist (artistId INT PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, UNIQUE(firstname COLLATE NOCASE, lastname COLLATE NOCASE, email COLLATE NOCASE))'
         
         con = sqlite3.connect(db)
         
@@ -37,34 +37,33 @@ class ArtistDB:
 
     def _add_artist(self, artist):
 
-        insert_artist = 'INSERT INTO artist (firstname, lastname, email) VALUES (?, ?, ?, ?)'
+        insert_artist = 'INSERT INTO artist (firstname, lastname, email) VALUES (?, ?, ?)'
 
         try: 
             with sqlite3.connect(db) as con:
                 row = con.execute(insert_artist, (artist.first_name, artist.last_name, artist.email))
-                new_id = row.lastrowid  
-                artist.id = new_id  
         except sqlite3.IntegrityError as e:
             raise ArtstoreError(f'This artist is already in the database: {artist.first_name} {artist.last_name}')
         finally:
             con.close()
 
-    def artist_search(self, artist):
+    def artist_search(self, first_name, last_name):
 
-        search_sql = 'SELECT rowid, * FROM artist WHERE UPPER(firstname) = UPPER(?) AND UPPER(lastname) = UPPER(?)'
+        search_sql = 'SELECT artistId FROM artist WHERE UPPER(firstname) = UPPER(?) AND UPPER(lastname) = UPPER(?)'
 
         con = sqlite3.connect(db) 
         con.row_factory = sqlite3.Row 
-        row = con.execute(search_sql, (artist.first_name, artist.last_name))
+        row = con.execute(search_sql, (first_name, last_name))
         result = row.fetchone()
 
         if result:
-            artist = Artist(result['artist_id'], result['firstname'], result['lastname'], result['email'])
+            artist_id = result['artistId']
         else:
-            artist = "None"
+            artist_id = -1
+
         con.close()
 
-        return artist
+        return artist_id
 
 class Artwork:
 
@@ -78,12 +77,12 @@ class Artwork:
 
         self.artworkdb = ArtworkDB()
 
-    def save(self):
+    def save(self, first_name, last_name):
 
         if self.id:
             self.artworkdb._update_artwork(self)
         else:
-            self.artworkdb._add_artwork(self)
+            self.artworkdb._add_artwork(self, first_name, last_name)
 
     def delete(self):
 
@@ -93,7 +92,7 @@ class ArtworkDB:
 
     def __init__(self):
 
-        create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (artwork_id INT, artist_id INT, title TEXT, price DECIMAL(10, 2), available BOOLEAN UNIQUE(title COLLATE NOCASE), PRIMARY KEY (artwork_id), FOREIGN KEY(artist_id) REFERENCES artist(artist_id))'
+        create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (artist_id INT, title TEXT, price DECIMAL(10, 2), available TEXT, FOREIGN KEY(artist_id) REFERENCES artist(rowid))'
 
         con = sqlite3.connect(db)
         
@@ -102,18 +101,19 @@ class ArtworkDB:
 
         con.close()
 
-    def _add_artwork(self, artwork):
+    def _add_artwork(self, artwork, first_name, last_name):
         """Need a way to get artist id from artist table"""
 
-        artist_id_query = 'SELECT id FROM artists WHERE firstname = ? and lastname = ?'
-        insert_artwork_query = 'INSERT INTO artwork (?, ?, ?, ?, ?)'
+        artist_id_query = 'SELECT artistId FROM artist WHERE firstname = ? and lastname = ?'
+        insert_artwork_query = 'INSERT INTO artwork (artist_id, title, price, available) VALUES (?, ?, ?, ?)'
 
         con = sqlite3.connect(db)
 
         with con:
-            row = con.execute(artist_id_query)
+            con.row_factory = sqlite3.Row
+            row = con.execute(artist_id_query, (first_name, last_name))
             artist_id_result = row.fetchone()
-            con.execute(insert_artwork_query, (artwork.id, artist_id_result, artwork.title, artwork.price, artwork.available))
+            con.execute(insert_artwork_query, (artist_id_result[0], artwork.title, artwork.price, artwork.available))
 
         con.close()
 
@@ -168,9 +168,9 @@ class ArtworkDB:
         result = con.execute(artist_id_query, (artist.first_name, artist.last_name))
         artist_id_result = result.fetchone()
 
-        rows = con.execute(search_sql)
+        rows = con.execute(search_sql, (artist_id_result))
         for r in rows:
-            artwork = Artwork[r['artwork_id'], r['artist_id'], r['title'], r['price'], r['available'])
+            artwork = Artwork(r['artwork_id'], r['artist_id'], r['title'], r['price'], r['available'])
             artworks.append(artwork)
 
         con.close()

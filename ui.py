@@ -1,4 +1,4 @@
-from artstore import Artist, Artwork
+from artstore import Artist, Artwork, ArtistDB, ArtworkDB
 
 def get_choice(menu):
 
@@ -19,18 +19,19 @@ def get_artist_info():
 
 def get_artwork_info():
 
-    first_name, last_name = input('Enter artist full name: ').split()
+    while True:
+        first_name, last_name = input('Enter artist full name: ').split()
+        artist_id = ArtistDB().artist_search(first_name, last_name)
+    
+        if artist_id == -1:
+            print('Add the artist to the database first.')
+            break
 
-    if Artist.artist_search(first_name, last_name) != "None":
-        artist_id = Artist.artist_id
-    else:
-        print('Add the artist to the database first.')
+        title = input('Enter artwork title: ')
+        price = float(input('Enter artwork price: '))
+        available = input('Enter \'for sale\' or \'sold\': ')
 
-    title = input('Enter artwork title: ')
-    price = float(input('Enter artwork price: '))
-    available = input('Enter \'for sale\' or \'sold\': ')
-
-    return Artwork(title, price, available, artist_id)
+        return Artwork(title, price, available, artist_id), first_name, last_name
 
 def get_sale_info():
 
@@ -46,7 +47,7 @@ def artist_match():
     while True:
         first_name, last_name = input('Enter the artist\'s full name: ')
 
-        if Artist.artist_search(first_name, last_name) != "None":
+        if ArtistDB().artist_search(first_name, last_name) != "None":
             return first_name, last_name
         else:
             print('That artist is not in the database.')
@@ -57,7 +58,7 @@ def artwork_match():
     while True:
         title = input('Enter the artwork title: ')
 
-        if Artwork.artwork_search(title) != "None":
+        if ArtworkDB().artwork_search(title) != "None":
             return title
         else:
             print('That artwork is not in the database.')
