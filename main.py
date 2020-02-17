@@ -29,17 +29,17 @@ def create_menu():
     return menu
 
 def add_artist():
-    #try:
+    try:
         new_artist = ui.get_artist_info()
         new_artist.save()
-    #except:
-        #print('Sorry, you cannot add the same artist twice.')
+    except:
+        print('Sorry, you cannot add the same artist twice.')
 
 """Consider combining search_artist and display"""
 def search_artist():
     first_name, last_name = ui.artist_match()
-    match = artist_log.artist_search(first_name, last_name)
-    artworks = artwork_log.artwork_by_artist(match)
+    id_match = artist_log.artist_search(first_name, last_name)
+    artworks = artwork_log.artwork_by_artist(id_match)
     ui.show_artwork(artworks)
 
 def display_artwork():
@@ -47,28 +47,27 @@ def display_artwork():
     match = artist_log.artist_search(first_name, last_name)
     artworks = artwork_log.artwork_by_artist(match)
     for artwork in artworks:
-        if artwork.availability == 'sold':
+        if artwork.available == 'sold':
             artworks.remove(artwork)
     ui.show_artwork(artworks)
 
 """Consider combining add artist and artwork"""
 def add_artwork():
-    #try:
+    try:
         new_artwork, first_name, last_name = ui.get_artwork_info()
         new_artwork.save(first_name, last_name)
-    #except:
-        #print('Sorry, you cannot add the same artwork twice.')
+    except:
+        print('Sorry, you cannot add the same artwork twice.')
 
 def delete_artwork():
     del_artwork = ui.artwork_match()
     del_artwork.delete()
 
 def change_availability():
-    title = ui.artwork_match()
-    artwork = artwork_log.artwork_search(title)
+    artwork = ui.artwork_match()
     new_available = ui.get_sale_info()
     artwork.available = new_available
-    artwork.save()
+    artwork.update()
 
 def quit_program():
     print('Thanks!')

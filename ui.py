@@ -37,15 +37,17 @@ def get_sale_info():
 
     while True:
         sale_info = input('Enter \'sold\' or \'available\': ')
-        if sale_info.lower() in ['sold', 'available']:
-            return sale_info.lower() == 'sold'
+        if sale_info.lower() == 'sold':
+            return 'sold'
+        elif sale_info.lower() == 'available':
+            return 'available'
         else:
             print('Type \'sold\' or \'available\'')
 
 def artist_match():
 
     while True:
-        first_name, last_name = input('Enter the artist\'s full name: ')
+        first_name, last_name = input('Enter the artist\'s full name: ').split()
 
         if ArtistDB().artist_search(first_name, last_name) != "None":
             return first_name, last_name
@@ -59,7 +61,8 @@ def artwork_match():
         title = input('Enter the artwork title: ')
 
         if ArtworkDB().artwork_search(title) != "None":
-            return title
+            artwork = ArtworkDB().artwork_search(title)
+            return artwork
         else:
             print('That artwork is not in the database.')
             break
