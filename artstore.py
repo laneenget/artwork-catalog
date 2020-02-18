@@ -91,7 +91,7 @@ class Artwork:
 
     def __repr__(self):
         
-        return {'title':self.title, 'price':self.price, 'available':self.available}
+        return {'title':self.title, 'price':str(self.price), 'available':self.available}
 
     def save(self):
 

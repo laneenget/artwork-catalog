@@ -12,65 +12,51 @@ def main():
     while True:
         command = ui.get_choice(menu)
         action = menu.get_action(command)
-        action()
+        action(command)
         if command == 'Q':
             break
 
 def create_menu():
     menu = Menu()
-    menu.add_command('1', 'Add artist', add_artist)
-    menu.add_command('2', 'Search for artwork by artist', search_artist)
-    menu.add_command('3', 'Display available artwork by artist', display_artwork)
-    menu.add_command('4', 'Add new artwork', add_artwork)
+    menu.add_command('1', 'Add artist', add_data)
+    menu.add_command('2', 'Search for artwork by artist', search_and_display)
+    menu.add_command('3', 'Display available artwork by artist', search_and_display)
+    menu.add_command('4', 'Add new artwork', add_data)
     menu.add_command('5', 'Delete artwork', delete_artwork)
     menu.add_command('6', 'Change artwork availability', change_availability)
     menu.add_command('Q', 'Quit', quit_program)
 
     return menu
 
-def add_artist():
-    try:
-        first_name, last_name = ui.get_artist_name()
-        artist_id = artist_log.artist_search(first_name, last_name)
-        if artist_id == -1:
+def add_data(command):
+    first_name, last_name = ui.get_artist_name()
+    artist_id = artist_log.artist_search(first_name, last_name)
+    if artist_id == -1:
+        if command == 1:
             new_artist = ui.get_artist_info(first_name, last_name)
-        new_artist.save()
-    except:
-        print('Sorry, you cannot add the same artist twice.')
+            new_artist.save()
+        elif command == 4:
+            title = ui.get_artwork_title()
+            new_artwork = ui.get_artwork_info(artist_id, title)
+            new_artwork.save()
 
-"""Consider combining search_artist and display"""
-def search_artist():
+def search_and_display(command):
     first_name, last_name = ui.get_artist_name()
     id_match = artist_log.artist_search(first_name, last_name)
     artworks = artwork_log.artwork_by_artist(id_match)
-    ui.show_artwork(artworks)
-
-def display_artwork():
-    first_name, last_name = ui.get_artist_name()
-    match = artist_log.artist_search(first_name, last_name)
-    artworks = artwork_log.artwork_by_artist(match)
-    for artwork in artworks:
-        if artwork.available == 'sold':
-            artworks.remove(artwork)
-    ui.show_artwork(artworks)
-
-"""Consider combining add artist and artwork"""
-def add_artwork():
-    first_name, last_name = ui.get_artist_name()
-    artist_id = artist_log.artist_search(first_name, last_name)
-    if artist_id != -1:
-        title = ui.get_artwork_title()
-        new_artwork = ui.get_artwork_info(artist_id, title)
-        new_artwork.save()
-    else:
-        print('Add the artist to the database first.')
+    if command == 2:
+        ui.show_artwork(artworks)
+    elif command == 3:
+        for artwork in artworks:
+            if artwork.available == 'sold':
+                artworks.remove(artwork)
+            ui.show_artwork(artworks)
    
-
-def delete_artwork():
+def delete_artwork(command):
     del_artwork = artwork_match()
     del_artwork.delete()
 
-def change_availability():
+def change_availability(command):
     artwork = artwork_match()
     new_available = ui.get_sale_info()
     artwork.available = new_available
