@@ -93,12 +93,12 @@ class Artwork:
         
         return {'title':self.title, 'price':self.price, 'available':self.available}
 
-    def save(self, first_name, last_name):
+    def save(self):
 
-        self.artworkdb._add_artwork(self, first_name, last_name)
+        self.artworkdb._add_artwork(self)
 
     def update(self):
-        
+
         self.artworkdb._update_artwork(self)
 
     def delete(self):
@@ -120,20 +120,17 @@ class ArtworkDB:
 
         con.close()
 
-    def _add_artwork(self, artwork, first_name, last_name):
+    def _add_artwork(self, artwork):
 
-        artist_id_query = 'SELECT artistId FROM artist WHERE firstname = ? and lastname = ?'
-        insert_artwork_query = 'INSERT INTO artwork (artist_id, title, price, available) VALUES (?, ?, ?, ?)'
+        insert_artwork = 'INSERT INTO artwork (artist_id, title, price, available) VALUES (?, ?, ?, ?)'
 
-        con = sqlite3.connect(db)
-
-        with con:
-            con.row_factory = sqlite3.Row
-            row = con.execute(artist_id_query, (first_name, last_name))
-            artist_id_result = row.fetchone()
-            con.execute(insert_artwork_query, (artist_id_result[0], artwork.title, artwork.price, artwork.available))
-
-        con.close()
+        try: 
+            with sqlite3.connect(db) as con:
+                row = con.execute(insert_artwork, (artwork.artist_id, artwork.title, artwork.price, artwork.available))
+        except sqlite3.IntegrityError as e:
+            raise ArtstoreError(f'This artwork is already in the database: {artwork.title}')
+        finally:
+            con.close()
 
     def _delete_artwork(self, artwork):
 
@@ -169,7 +166,7 @@ class ArtworkDB:
         if result:
             artwork = Artwork(result['title'], result['price'], result['available'], result['artist_id'])
         else:
-            artwork = "None"
+            artwork = None
         con.close()
 
         return artwork

@@ -31,7 +31,7 @@ def get_artwork_info():
         price = float(input('Enter artwork price: '))
         available = input('Enter \'for sale\' or \'sold\': ')
 
-        return Artwork(title, price, available, artist_id), first_name, last_name
+        return Artwork(title, price, available, artist_id)
 
 def get_sale_info():
 
@@ -60,7 +60,7 @@ def artwork_match():
     while True:
         title = input('Enter the artwork title: ')
 
-        if ArtworkDB().artwork_search(title) != "None":
+        if ArtworkDB().artwork_search(title) != None:
             artwork = ArtworkDB().artwork_search(title)
             return artwork
         else:

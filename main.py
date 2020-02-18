@@ -54,8 +54,8 @@ def display_artwork():
 """Consider combining add artist and artwork"""
 def add_artwork():
     try:
-        new_artwork, first_name, last_name = ui.get_artwork_info()
-        new_artwork.save(first_name, last_name)
+        new_artwork = ui.get_artwork_info()
+        new_artwork.save()
     except:
         print('Sorry, you cannot add the same artwork twice.')
 
