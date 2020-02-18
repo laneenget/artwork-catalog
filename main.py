@@ -30,20 +30,23 @@ def create_menu():
 
 def add_artist():
     try:
-        new_artist = ui.get_artist_info()
+        first_name, last_name = ui.get_artist_name()
+        artist_id = artist_log.artist_search(first_name, last_name)
+        if artist_id == -1:
+            new_artist = ui.get_artist_info(first_name, last_name)
         new_artist.save()
     except:
         print('Sorry, you cannot add the same artist twice.')
 
 """Consider combining search_artist and display"""
 def search_artist():
-    first_name, last_name = ui.artist_match()
+    first_name, last_name = ui.get_artist_name()
     id_match = artist_log.artist_search(first_name, last_name)
     artworks = artwork_log.artwork_by_artist(id_match)
     ui.show_artwork(artworks)
 
 def display_artwork():
-    first_name, last_name = ui.artist_match()
+    first_name, last_name = ui.get_artist_name()
     match = artist_log.artist_search(first_name, last_name)
     artworks = artwork_log.artwork_by_artist(match)
     for artwork in artworks:
@@ -53,21 +56,34 @@ def display_artwork():
 
 """Consider combining add artist and artwork"""
 def add_artwork():
-    try:
-        new_artwork = ui.get_artwork_info()
+    first_name, last_name = ui.get_artist_name()
+    artist_id = artist_log.artist_search(first_name, last_name)
+    if artist_id != -1:
+        title = ui.get_artwork_title()
+        new_artwork = ui.get_artwork_info(artist_id, title)
         new_artwork.save()
-    except:
-        print('Sorry, you cannot add the same artwork twice.')
+    else:
+        print('Add the artist to the database first.')
+   
 
 def delete_artwork():
-    del_artwork = ui.artwork_match()
+    del_artwork = artwork_match()
     del_artwork.delete()
 
 def change_availability():
-    artwork = ui.artwork_match()
+    artwork = artwork_match()
     new_available = ui.get_sale_info()
     artwork.available = new_available
     artwork.update()
+
+def artwork_match():
+    title = ui.get_artwork_title()
+
+    if artwork_log.artwork_search(title) != None:
+        artwork = artwork_log.artwork_search(title)
+        return artwork
+    else:
+        print('That artwork is not in the database.')
 
 def quit_program():
     print('Thanks!')

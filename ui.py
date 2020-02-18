@@ -11,27 +11,22 @@ def get_choice(menu):
         else:
             print('Not a valid choice, try again.')
 
-def get_artist_info():
+def get_artist_name():
 
     first_name, last_name = input('Enter artist full name: ').split()
+    return first_name, last_name
+
+def get_artist_info(first_name, last_name):
+
     email = input('Enter artist email: ')
     return Artist(first_name, last_name, email)
 
-def get_artwork_info():
+def get_artwork_info(artist_id, title):
 
-    while True:
-        first_name, last_name = input('Enter artist full name: ').split()
-        artist_id = ArtistDB().artist_search(first_name, last_name)
-    
-        if artist_id == -1:
-            print('Add the artist to the database first.')
-            break
+    price = float(input('Enter artwork price: '))
+    available = input('Enter \'for sale\' or \'sold\': ')
 
-        title = input('Enter artwork title: ')
-        price = float(input('Enter artwork price: '))
-        available = input('Enter \'for sale\' or \'sold\': ')
-
-        return Artwork(title, price, available, artist_id)
+    return Artwork(title, price, available, artist_id)
 
 def get_sale_info():
 
@@ -44,28 +39,10 @@ def get_sale_info():
         else:
             print('Type \'sold\' or \'available\'')
 
-def artist_match():
-
-    while True:
-        first_name, last_name = input('Enter the artist\'s full name: ').split()
-
-        if ArtistDB().artist_search(first_name, last_name) != "None":
-            return first_name, last_name
-        else:
-            print('That artist is not in the database.')
-            break
-
-def artwork_match():
-
-    while True:
-        title = input('Enter the artwork title: ')
-
-        if ArtworkDB().artwork_search(title) != None:
-            artwork = ArtworkDB().artwork_search(title)
-            return artwork
-        else:
-            print('That artwork is not in the database.')
-            break
+def get_artwork_title():
+    
+    title = input('Enter artwork title: ')
+    return title
 
 def show_artwork(artworks):
 
