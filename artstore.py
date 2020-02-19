@@ -55,6 +55,18 @@ class ArtistDB:
         finally:
             con.close()
 
+    """Delete all artists from db for testing purposes"""
+    def delete_artists(self):
+
+        remove_artists = 'DELETE FROM Artist'
+
+        con = sqlite3.connect(db)
+
+        with con:
+            con.execute(remove_artists)
+
+        con.close()
+
     """Query database to find given artist"""
     def artist_search(self, first_name, last_name):
 
@@ -141,6 +153,18 @@ class ArtworkDB:
 
         with con:
             con.execute(delete_artwork_query, (artwork.title, ))
+
+        con.close()
+
+    """Delete all artworks from db for testing purposes"""
+    def delete_all_artworks(self):
+
+        remove_artworks = 'DELETE FROM Artwork'
+
+        con = sqlite3.connect(db)
+
+        with con:
+            con.execute(remove_artworks)
 
         con.close()
 

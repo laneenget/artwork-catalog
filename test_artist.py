@@ -26,16 +26,16 @@ class TestArtwork(TestCase):
         ArtworkDB.instance = None
 
     def test_save(self):
-        artwork = Artwork(1, 'testartwork', 220192.30, 'available')
+        artwork = Artwork(1, 'testartwork', 220192.30, 0)
         artwork.save()
         db = ArtworkDB()
         self.assertTrue(db.artwork_search(artwork.title))
 
     def test_update(self):
-        artwork = Artwork(1, 'testartwork', 22029384.12, 'available')
+        artwork = Artwork(1, 'testartwork', 22029384.12, 0)
         artwork.save()
 
-        artwork.available = 'sold'
+        artwork.available = 1
         artwork.update()
 
         db = ArtworkDB()
@@ -43,7 +43,7 @@ class TestArtwork(TestCase):
         self.assertEqual(artwork, db.artwork_search(artwork.title))
 
     def test_delete(self):
-        artwork = Artwork(1, 'testartwork', 3274883.12, 'sold')
+        artwork = Artwork(1, 'testartwork', 3274883.12, 0)
         artwork.save()
 
         artwork.delete()

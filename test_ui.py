@@ -30,14 +30,15 @@ class TestUI(TestCase):
 
     @patch('builtins.input', side_effect=['first_name', 'last_name', 'email'])
     def test_get_artist_info(self, mock_input):
-        artist = ui.get_artist_info()
+        artist = ui.get_artist_info('first_name', 'last_name')
         self.assertEqual('first_name', artist.first_name)
         self.assertEqual('last_name', artist.last_name)
         self.assertEqual('email', artist.email)
 
-    @patch('builtins.input', side_effect=['first_name', 'last_name', 'title', 'price', 'available'])
+    @patch('builtins.input', side_effect=[0, 'title', 126348.32, 'available'])
     def test_get_artwork_info(self, mock_input):
-        artwork = ui.get_artwork_info()
+        artwork = ui.get_artwork_info('artist_id', 'title')
+        self.assertEqual('artist_id', artwork.artist_id)
         self.assertEqual('title', artwork.title)
         self.assertEqual('price', artwork.price)
         self.assertEqual('available', artwork.available)
@@ -45,22 +46,22 @@ class TestUI(TestCase):
     @patch('builtins.input', side_effect=['available'])
     def test_get_sale_info(self, mock_input):
         sale_info = ui.get_sale_info()
-        self.assertIn('available', sale_info)
+        self.assertIn(0, sale_info)
 
     @patch('builtins.input', side_effect=['1234', 'puppy', 'BaNaNa', '-283.42'])
     def test_get_sale_info_invalid_input(self, mock_input):
         sale_info = ui.get_sale_info()
-        self.assertIn('available', sale_info)
+        self.assertNotIn(0, sale_info)
 
-    @patch('builtins.input', side_effect=['first_name', 'last_name'])
-    def test_artist_match(self, mock_input):
-        first_name, last_name = ui.artist_match()
+    @patch('builtins.input', side_effect=['first_name last_name'])
+    def test_get_artist_name(self, mock_input):
+        first_name, last_name = ui.get_artist_name()
         self.assertIn('first_name', first_name)
         self.assertIn('last_name', last_name)
 
     @patch('builtins.input', side_effect=['title'])
-    def test_artwork_match(self, mock_input):
-        title = ui.artwork_match()
+    def test_get_artwork_title(self, mock_input):
+        title = ui.get_artwork_title()
         self.assertIn('title', title)
 
     @patch('builtins.print')
