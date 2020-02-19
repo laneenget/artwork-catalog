@@ -55,6 +55,7 @@ class ArtistDB:
         finally:
             con.close()
 
+    """Query database to find given artist"""
     def artist_search(self, first_name, last_name):
 
         search_sql = 'SELECT artistId FROM artist WHERE UPPER(firstname) = UPPER(?) AND UPPER(lastname) = UPPER(?)'
@@ -87,11 +88,11 @@ class Artwork:
 
     def __str__(self):
 
-        return self.title + ' ' + str(self.price) + ' ' + self.available
+        return self.title + ' ' + str(self.price)
 
     def __repr__(self):
         
-        return {'title':self.title, 'price':str(self.price), 'available':self.available}
+        return {'title':self.title, 'price':str(self.price)}
 
     def save(self):
 
@@ -111,7 +112,7 @@ class ArtworkDB:
 
     def __init__(self):
 
-        create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (artist_id INT, title TEXT, price DECIMAL(10, 2), available TEXT, FOREIGN KEY(artist_id) REFERENCES artist(rowid))'
+        create_artwork_tbl = 'CREATE TABLE IF NOT EXISTS artwork (artist_id INT, title TEXT, price DECIMAL(10, 2), available INTEGER, FOREIGN KEY(artist_id) REFERENCES artist(rowid))'
 
         con = sqlite3.connect(db)
         
@@ -154,6 +155,7 @@ class ArtworkDB:
 
         con.close()
 
+    """Query database to find row with given artwork title"""
     def artwork_search(self, title):
 
         search_sql = 'SELECT rowid, * FROM artwork WHERE UPPER(title) = UPPER(?)'
@@ -171,6 +173,7 @@ class ArtworkDB:
 
         return artwork
 
+    """Query database to find all artwork by artist"""
     def artwork_by_artist(self, artist_id):
 
         artworks = []
